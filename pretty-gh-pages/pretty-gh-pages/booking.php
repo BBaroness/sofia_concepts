@@ -27,7 +27,80 @@
     <link rel="stylesheet" href="css/style.css">
   </head>
   <body>
-    
+
+    <!-- Start with php script -->
+    <?php
+
+            require("databaseHelper.php");
+            require("formHandling.php");
+
+            header("index.html");
+
+            $bookingSent = false;
+
+            // Add variables for each form input
+            $fname = $lname = $date = $phone_number = $booking_request = $booked_service = $appointment_time = "";
+
+            $fname_error = $lname_error = $date_error = $phone_number_error = $booking_request_error = $appointment_time_error = $booked_service_error = "";
+
+            
+            // Check for form submission and handle form
+            
+            if ($_SERVER["REQUEST_METHOD"] == "POST") {
+
+              if (empty($_POST['fname'])) {
+                $fname_error = "* Firstname field cannot be empty";
+              }else {
+                $fname = FormHandler:: sanitizeHtmlInput($_POST['fname']);
+              }
+
+              if (empty($_POST['lname'])){
+                $lname_error = "* Lastname field cannot be empty";
+              }else {
+                $lname = FormHandler:: sanitizeHtmlInput($_POST['lname']);
+              }
+
+              if (empty($_POST['date'])){
+                $date_error = "* Date field cannot be empty";                
+              }else {
+                $date = FormHandler:: sanitizeHtmlInput($_POST['date']);
+                
+              }
+
+              if (empty($_POST['phone_number'])){
+                $phone_number_error = "* Please add a contact so we can reach you when we need to";
+              }else if (!FormHandler::validatePhoneNumber($_POST['phone_number'])) {
+                $phone_number_error = "* Please enter a valid Ghanaian mobile number (without country code). Example... 026716562";
+              }else {
+                $phone_number = FormHandler:: sanitizeHtmlInput($_POST['phone_number']);                
+              }
+
+              if (empty($_POST['booking_request'])){
+                // It is not compulsory to add extra booking info
+              }else {
+                $booking_request = FormHandler:: sanitizeHtmlInput($_POST['booking_request']);
+              }
+
+              if(empty($_POST['booked_service'])) {
+                $booked_service_error = "* You need to let us know which of our services you are booking";
+              }else {
+                $booked_service = FormHandler::sanitizeHtmlInput($_POST['booked_service']);
+              }
+
+              if(empty($_POST['appointment_time'])) {
+                $appointment_time_error = "* To book and appointment, choose a time slot";
+              }else {
+                $appointment_time = FormHandler::sanitizeHtmlInput($_POST['booked_service']);                
+              }
+              
+              for ($i = 0; $i < 10; $i++) {echo "Booking request was " . $_POST['appointment_time'];}              
+                            
+            }
+
+          ?>
+
+
+
     <div class="hero-wrap js-fullheight" style="background-image: url('images/bg_1.jpg');" data-stellar-background-ratio="0.5">
       <div class="overlay"></div>
       <div class="container">
@@ -58,7 +131,7 @@
 				<li class="nav-item"><a href="index.html" class="nav-link">Home</a></li>
 				<li class="nav-item"><a href="about.html" class="nav-link">About Us</a></li>
 				<li class="nav-item"><a href="services.html" class="nav-link">Our Services</a></li>
-				<li class="nav-item active"><a href="booking.html" class="nav-link">Appointment Booking</a></li>
+				<li class="nav-item active"><a href="booking.php" class="nav-link">Appointment Booking</a></li>
 				<li class="nav-item"><a href="shop.html" class="nav-link">Shop</a></li>
 				<li class="nav-item"><a href="testimonials.html" class="nav-link">Testimonials</a></li>
 	        </ul>
@@ -89,36 +162,81 @@
               </div>
             </div>
           </div>
+          
+              
+          
+          
           <div class="col-md-6 appointment pl-md-5 ftco-animate">
             <h3 class="mb-3">Make A Booking</h3>
-            <form action="#" class="appointment-form">
+            
+            
+            <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" method="post"  class="appointment-form">
               <div class="row form-group d-flex">
                 <div class="col-md-6">
-                  <input type="text" class="form-control" placeholder="First Name">
+                  <input type="text" class="form-control" value="<?php echo $fname ?>" name="fname" placeholder="First Name">
+                  <span class="form-error" style="color: red;"><?php echo $fname_error;?></span>
                 </div>
                 <div class="col-md-6">
-                  <input type="text" class="form-control" placeholder="Last Name">
+                  <input type="text" class="form-control" name="lname" value="<?php echo $lname ?>" placeholder="Last Name">
+                  <span class="form-error" style="color: red;"><?php echo $lname_error;?></span>
                 </div>
               </div>
               <div class="row form-group d-flex">
                 <div class="col-md-6">
                   <div class="input-wrap">
                     <div class="icon"><span class="ion-md-calendar"></span></div>
-                    <input type="text" id="appointment_date" class="form-control" placeholder="Date">
+                    <input type="text" id="appointment_date" class="form-control" value="<?php echo $date ?>" name="date" placeholder="Date">
+                    <span class="form-error" style="color: red;"><?php echo $date_error;?></span>
                   </div>
                 </div>
                 <div class="col-md-6">
-                  <input type="text" class="form-control" placeholder="Phone">
+                  <input type="text" class="form-control" name="phone_number" value="<?php echo $phone_number ?>" placeholder="Phone">
+                  <span class="form-error" style="color: red;"><?php echo $phone_number_error;?></span>
                 </div>
               </div>
-              <div class="form-group">
-                <textarea name="" id="" cols="30" rows="3" class="form-control" placeholder="What will you like us to do for you?"></textarea>
+
+              <div>
+                <label class="mr-sm-2" for="inlineFormCustomSelect" style="color: white;">Choose a service</label>
+                <select class="custom-select form-group" name ="booked_service" id="inlineFormCustomSelect">
+                  <option value="">Select and option *</option>
+                  <option value="facial" <?php if (isset($booked_service) && $booked_service == "facial") echo "selected" ?> >Facial Treatment</option>
+                  <option value="nails" <?php if (isset($booked_service) && $booked_service == "nails") echo "selected" ?>>Nail Care</option>
+                  <option value="hairstyling" <?php if (isset($booked_service) && $booked_service == "hairstyling") echo "selected" ?>>Hairstyling</option>
+                  <option value="haircutting" <?php if (isset($booked_service) && $booked_service == "haircutting") echo "selected" ?>>Hair Cutting</option>
+                </select>
+
+                <span class="form-error" style="color: red;"><?php echo $booked_service_error;?></span>
               </div>
+
+              <!-- Add select for user to choose available time -->
+              <div>
+                <label class="mr-sm-2" for="inlineFormCustomSelect" style="color: white;">Choose a time</label>
+                <select class="custom-select form-group" name="appointment_time"  id="inlineFormCustomSelect">
+                  <option value="">Choose appointment time *</option>
+                  <option value="1">9 am - 10 am</option>
+                  <option value="2">10 am - 11 am</option>
+                  <option value="3">11 am - 12 am</option>
+                </select>
+
+                <span class="form-error" style="color: red;"><?php echo $appointment_time_error;?></span>
+              </div>
+
+
+              <div class="form-group">
+                <textarea name="booking_request" id="" cols="30" rows="3" class="form-control" placeholder="Is there any extra info you'd like us to note for your appointment?"><?php echo $booking_request ?></textarea>
+                <span class="form-error" style="color: red;"><?php echo $booking_request_error;?></span>
+              </div>
+              
               <div class="form-group">
                 <input type="submit" value="Book Now" class="btn btn-white btn-outline-white py-3 px-4">
               </div>
             </form>
-          </div>          
+
+            
+          </div> 
+          
+          
+
         </div>
       </div>
     </section>
@@ -223,7 +341,6 @@
   <script src="js/scrollax.min.js"></script>
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBVWaKrjvy3MaE7SQ74_uJiULgl1JY0H2s&sensor=false"></script>
   <script src="js/google-map.js"></script>
-  <script src="js/main.js"></script>
-    
+  <script src="js/main.js"></script>    
   </body>
 </html>
