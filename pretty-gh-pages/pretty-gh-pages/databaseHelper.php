@@ -1,9 +1,9 @@
 <?php
 
 define("DATABASE_HOST", 'localhost');
-define("DATABASE_USER", 'localhost');
+define("DATABASE_USER", 'root');
 define("DATABASE_PASSWORD", '');
-define("DATABASE_NAME", 'name');
+define("DATABASE_NAME", 'sofiawebtech');
 
 
 
@@ -14,8 +14,8 @@ class databaseHelper {
 	protected $query;
 	public $query_count = 0;
 	
-	public function __construct($dbhost = 'localhost', $dbuser = 'root', $dbpass = '', $dbname = '' /*, $charset = 'utf8' */) {
-		$this->connection = new mysqli($dbhost, $dbuser, $dbpass, $dbname);
+	public function __construct(/*$dbhost = 'localhost', $dbuser = 'root', $dbpass = '', $dbname = '' /*, $charset = 'utf8' */) {
+		$this->connection = new mysqli(DATABASE_HOST, DATABASE_USER, DATABASE_PASSWORD, DATABASE_NAME);
 		if ($this->connection->connect_error) {
 			die('Failed to connect to Database - ' . $this->connection->connect_error);
 		}
@@ -25,7 +25,47 @@ class databaseHelper {
 
     public function _destruct() {
         $this->connection.close();
-    }
+	}
+	
+
+	/*
+		Add a method for creating a user
+	*/
+	public function registerClient(string $fname, string $lname, string $gender, string $email, string $contact, string $password){
+		// first encrypt password with one way encryption
+		$password = md5($password);
+		$response = $this->query('INSERT INTO `clients` (`fname`, `lname`, `gender`, `email`, `contact`, `password`) 
+		VALUES (?, ?, ?, ?, ?, ?)', array($fname, $lname, $gender, $email, $contact, $password))->affectedRows();
+
+		if ($response == 1) {
+			return true;
+		}
+		return false;
+	}
+
+
+	/*
+		Add method to check email availablity
+	*/
+	public function emailUnused(string $email): bool{
+		$result = $this->query('SELECT fname FROM clients WHERE email = ?', array($email))->fetchArray();
+
+		if (empty($result)){
+			return true;
+		}
+		return false;
+	}
+
+
+	/**
+	 * 
+	 */
+	public function login(string $email, string $password) {
+		// First encrypt the password
+		$password = md5($password);
+		return $this->query('SELECT * FROM clients WHERE email = ? AND password = ?', array($email, $password))->fetchArray();
+	}
+
 
 
     public function getBookedTimeSlots($date, $booked_service) {
@@ -90,7 +130,7 @@ class databaseHelper {
 		return $result;
 	}
 
-	private function fetchArray() {
+	public function fetchArray() {
 	    $params = array();
 	    $meta = $this->query->result_metadata();
 	    while ($field = $meta->fetch_field()) {

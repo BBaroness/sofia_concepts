@@ -25,7 +25,7 @@
         die("Connection failed: " . mysqli_connect_error());
 
     }else{
-         header("location: index.html");
+         header("location: index.php");
         //echo "connected to the database<br>";
 
     }
@@ -122,14 +122,14 @@
 
             // redirect user to index page
 
-            header("location: index.html"); 
+            header("location: index.php"); 
 
         } else {
             echo "Registration Failed.";
 
 
             // redirect user to register page
-            //header("location: index.html");
+            //header("location: index.php");
 
         }
 

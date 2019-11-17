@@ -1,4 +1,6 @@
 <?php
+    
+    declare(strict_types=1); // strict requirement
 
     class FormHandler {
 
@@ -37,6 +39,24 @@
             }else {
                 return false;
             }                
+        }
+
+
+        /**
+         * Password must be at least 8 characters long and include lowercase, uppercase, and numbers 
+         */
+        public static function validatePassword(string $passwordInput) {
+            // Make sure it's 8 or more characters
+            if (strlen($passwordInput) < 8){
+                return false;
+            }
+
+            // Make sure the stirng contains lowercase, uppercase, and a number
+            $valid = preg_match("/[a-z]/",$passwordInput);
+            $valid = preg_match("/[A-Z]/",$passwordInput);
+            $valid = preg_match("/[0-9]/",$passwordInput);
+
+            return $valid;                 
         }
 
 
