@@ -165,67 +165,71 @@
                 
                 
                 <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" method="post"  class="appointment-form">
-                <div class="row form-group d-flex">
-                    <div class="col-md-6">
-                    <input type="text" class="form-control" value="<?php echo $fname ?>" name="fname" placeholder="First Name">
-                    <span class="form-error" style="color: red;"><?php echo $fname_error;?></span>
-                    </div>
-                    <div class="col-md-6">
-                    <input type="text" class="form-control" name="lname" value="<?php echo $lname ?>" placeholder="Last Name">
-                    <span class="form-error" style="color: red;"><?php echo $lname_error;?></span>
-                    </div>
-                </div>
+                  <div class="row form-group d-flex">
+                      <div class="col-md-6">
+                      <input type="text" class="form-control" value="<?php echo $fname ?>" name="fname" placeholder="First Name">
+                      <span class="form-error" style="color: red;"><?php echo $fname_error;?></span>
+                      </div>
+                      <div class="col-md-6">
+                      <input type="text" class="form-control" name="lname" value="<?php echo $lname ?>" placeholder="Last Name">
+                      <span class="form-error" style="color: red;"><?php echo $lname_error;?></span>
+                      </div>
+                  </div>
 
-                <br>
-                <br>
+                  <br>
+                  <br>
 
-                
-                <div class="row form-group d-flex">                    
-                    <div class="col-md-6">
-                        <input type="text" class="form-control" name="phone_number" value="<?php echo $phone_number ?>" placeholder="Phone">
-                        <span class="form-error" style="color: red;"><?php echo $phone_number_error;?></span>
-                    </div>
+                  
+                  <div class="row form-group d-flex">                    
+                      <div class="col-md-6">
+                          <input type="text" class="form-control" name="phone_number" value="<?php echo $phone_number ?>" placeholder="Phone">
+                          <span class="form-error" style="color: red;"><?php echo $phone_number_error;?></span>
+                      </div>
 
-                    <div class="col-md-6">
-                        <input type="email" class="form-control" name="email" value="<?php echo $email ?>" placeholder="Email">
-                        <span class="form-error" style="color: red;"><?php echo $email_error;?></span>
-                    </div>
+                      <div class="col-md-6">
+                          <input type="email" class="form-control" name="email" value="<?php echo $email ?>" placeholder="Email">
+                          <span class="form-error" style="color: red;"><?php echo $email_error;?></span>
+                      </div>
 
-                    <!-- Add select for user to choose available time -->
-                    <div class="col-md-6 py-5">
-                      <select class="custom-select form-group" name="gender" id="inlineFormCustomSelect">
-                        <option value="">Select Gender</option>
-                        <option value="male" <?php if($gender == "male") echo 'selected'; ?> >Male</option>
-                        <option value="female" <?php if($gender == "female") echo 'selected'; ?> >Female</option>
-                        <option value="other" <?php if($gender == "other") echo 'selected'; ?> >Prefer not to say</option>
-                      </select>
+                      <!-- Add select for user to choose available time -->
+                      <div class="col-md-6 py-5">
+                        <select class="custom-select form-group" name="gender" id="inlineFormCustomSelect">
+                          <option value="">Select Gender</option>
+                          <option value="male" <?php if($gender == "male") echo 'selected'; ?> >Male</option>
+                          <option value="female" <?php if($gender == "female") echo 'selected'; ?> >Female</option>
+                          <option value="other" <?php if($gender == "other") echo 'selected'; ?> >Prefer not to say</option>
+                        </select>
 
-                      <span class="form-error" style="color: red;"><?php echo $gender_select_error;?></span>
-                    </div>
-                </div>
-                
-
-
-                <div class="row form-group d-flex justify-content-center">                    
-                    <!-- <div class="col-md-6">
-                        <input type="text" class="form-control" name="username" value="<?php echo $username ?>" placeholder="Username">
-                        <span class="form-error" style="color: red;"><?php echo $username_error;?></span>
-                    </div> -->
-
-                    <div class="col-md-6">
-                        <input type="password" class="form-control" name="password" value="<?php echo $password ?>" placeholder="Password">
-                        <span class="form-error" style="color: red;"><?php echo $password_error;?></span>
-                    </div>
-                    <div class="col-md-6">
-                        <input type="password" class="form-control" name="password_confirmation" value="<?php echo $password_confirmation ?>" placeholder="Confirm Password">
-                    </div>
-                </div>
+                        <span class="form-error" style="color: red;"><?php echo $gender_select_error;?></span>
+                      </div>
+                  </div>
+                  
 
 
-                
-                <div class="form-group my-5">
-                    <input type="submit" value="Register" class="btn btn-white btn-outline-white py-3 px-4">
-                </div>
+                  <div class="row form-group d-flex justify-content-center">                    
+                      <!-- <div class="col-md-6">
+                          <input type="text" class="form-control" name="username" value="<?php echo $username ?>" placeholder="Username">
+                          <span class="form-error" style="color: red;"><?php echo $username_error;?></span>
+                      </div> -->
+
+                      <div class="col-md-6">
+                          <input type="password" class="form-control" name="password" value="<?php echo $password ?>" placeholder="Password">
+                          <span class="form-error" style="color: red;"><?php echo $password_error;?></span>
+                      </div>
+                      <div class="col-md-6">
+                          <input type="password" class="form-control" name="password_confirmation" value="<?php echo $password_confirmation ?>" placeholder="Confirm Password">
+                      </div>
+                  </div>
+
+
+                  
+                  <div class="form-group my-5">
+                      <input type="submit" value="Register" class="btn btn-white btn-outline-white py-3 px-4">
+                  </div>
+
+                  <div>
+                      <p>Already a user? <a href="login.php" style="color: black"><u>Log in</u></a> instead</p>
+                  </div>
                 </form>
               
             </div>

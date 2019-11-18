@@ -1,3 +1,9 @@
+<?php
+  // Continue session on this page
+  session_start();
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -36,43 +42,25 @@
 
             header("index.php");
 
+            $_SESSION['login_return_url'] = 'booking.php';
+
             $bookingSent = false;
 
             // Add variables for each form input
-            $fname = $lname = $date = $phone_number = $booking_request = $booked_service = $appointment_time = "";
+            $date = $booking_request = $booked_service = $appointment_time = "";
 
-            $fname_error = $lname_error = $date_error = $phone_number_error = $booking_request_error = $appointment_time_error = $booked_service_error = "";
+            $date_error = $booking_request_error = $appointment_time_error = $booked_service_error = "";
 
             
             // Check for form submission and handle form
             
             if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-              if (empty($_POST['fname'])) {
-                $fname_error = "* Firstname field cannot be empty";
-              }else {
-                $fname = FormHandler:: sanitizeHtmlInput($_POST['fname']);
-              }
-
-              if (empty($_POST['lname'])){
-                $lname_error = "* Lastname field cannot be empty";
-              }else {
-                $lname = FormHandler:: sanitizeHtmlInput($_POST['lname']);
-              }
-
               if (empty($_POST['date'])){
                 $date_error = "* Date field cannot be empty";                
               }else {
                 $date = FormHandler:: sanitizeHtmlInput($_POST['date']);
                 
-              }
-
-              if (empty($_POST['phone_number'])){
-                $phone_number_error = "* Please add a contact so we can reach you when we need to";
-              }else if (!FormHandler::validatePhoneNumber($_POST['phone_number'])) {
-                $phone_number_error = "* Please enter a valid Ghanaian mobile number (without country code). Example... 026716562";
-              }else {
-                $phone_number = FormHandler:: sanitizeHtmlInput($_POST['phone_number']);                
               }
 
               if (empty($_POST['booking_request'])){
@@ -92,9 +80,7 @@
               }else {
                 $appointment_time = FormHandler::sanitizeHtmlInput($_POST['booked_service']);                
               }
-              
-              for ($i = 0; $i < 10; $i++) {echo "Booking request was " . $_POST['appointment_time'];}              
-                            
+                                          
             }
 
           ?>
@@ -121,22 +107,42 @@
 
     <nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light" id="ftco-navbar">
 	    <div class="container">
-	      <a class="navbar-brand" href="index.php">Allure</a>
+	      <a class="navbar-brand" href="index.php">ALLURE</a>
 	      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#ftco-nav" aria-controls="ftco-nav" aria-expanded="false" aria-label="Toggle navigation">
 	        <span class="oi oi-menu"></span> Menu
 	      </button>
 
 	      <div class="collapse navbar-collapse" id="ftco-nav">
 	        <ul class="navbar-nav ml-auto">
-				<li class="nav-item"><a href="index.php" class="nav-link">Home</a></li>
-				<li class="nav-item"><a href="about.html" class="nav-link">About Us</a></li>
-				<li class="nav-item"><a href="services.html" class="nav-link">Our Services</a></li>
-				<li class="nav-item active"><a href="booking.php" class="nav-link">Appointment Booking</a></li>
-				<li class="nav-item"><a href="shop.html" class="nav-link">Shop</a></li>
-				<li class="nav-item"><a href="testimonials.html" class="nav-link">Testimonials</a></li>
+	          <li class="nav-item"><a href="index.php" class="nav-link">Home</a></li>
+	          <li class="nav-item"><a href="about.html" class="nav-link">About Us</a></li>
+	          <li class="nav-item"><a href="services.html" class="nav-link">Our Services</a></li>
+	          <li class="nav-item active"><a href="booking.php" class="nav-link">Appointment Booking</a></li>
+	          <li class="nav-item"><a href="shop.html" class="nav-link">Shop</a></li>
+			  <li class="nav-item"><a href="testimonials.html" class="nav-link">Testimonials</a></li>
+			  
+			  <!-- Add Dynamic parts for user interaction -->
+			  
+				<?php if (!isset($_SESSION['logged_in_client'])): ?>
+					<li class="nav-item"><a href="login.php" class="nav-link"><strong>Log in</strong></a></li>
+				<?php else: ?>
+					<li class="nav-item dropdown">
+						<a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+							<b><?php echo $_SESSION['logged_in_client']['fname']; ?></b>
+						</a>
+						<div class="dropdown-menu" aria-labelledby="navbarDropdown">
+							<a class="dropdown-item" href="client/appointments.php">My Appointments</a>
+							<a class="dropdown-item" href="client/profile.php">Edit Profile</a>
+							<div class="dropdown-divider"></div>
+							<a class="dropdown-item" href="logout.php">Logout</a>
+						</div>
+					</li>
+				<?php endif; ?>
+			  
 	        </ul>
 	      </div>
-	    </div>
+		</div>	  
+
 	  </nav>
     <!-- END nav -->
 		<section class="ftco-section ftco-appointment">
@@ -162,78 +168,84 @@
               </div>
             </div>
           </div>
-          
-              
-          
-          
-          <div class="col-md-6 appointment pl-md-5 ftco-animate">
-            <h3 class="mb-3">Make A Booking</h3>
-            
-            
-            <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" method="post"  class="appointment-form">
-              <div class="row form-group d-flex">
-                <div class="col-md-6">
-                  <input type="text" class="form-control" value="<?php echo $fname ?>" name="fname" placeholder="First Name">
-                  <span class="form-error" style="color: red;"><?php echo $fname_error;?></span>
-                </div>
-                <div class="col-md-6">
-                  <input type="text" class="form-control" name="lname" value="<?php echo $lname ?>" placeholder="Last Name">
-                  <span class="form-error" style="color: red;"><?php echo $lname_error;?></span>
-                </div>
+
+
+          <?php if (!isset($_SESSION['logged_in_client'])): ?>            <!-- If user isn't logged in  tell them to-->
+            <div class="col-md-6 appointment pl-md-5 ftco-animate">
+
+              <h3 class="" style="color: black">Sorry... You need to login first</h3>
+
+              <a href="login.php" class="btn btn-white btn-outline-white my-3 py-2 px-4">Sign In</a>
+
+              <div>
+                <p style="color: white">Are you new here? <a href="signup.php" style="color: black"><u>Sign up</u></a> instead</p>
               </div>
-              <div class="row form-group d-flex">
-                <div class="col-md-6">
-                  <div class="input-wrap">
-                    <div class="icon"><span class="ion-md-calendar"></span></div>
-                    <input type="text" id="appointment_date" class="form-control" value="<?php echo $date ?>" name="date" placeholder="Date">
-                    <span class="form-error" style="color: red;"><?php echo $date_error;?></span>
+                            
+          </div>
+            
+
+          <?php else: ?>            <!-- If they are logged in, then they can book an appointment -->
+            <div class="col-md-6 appointment pl-md-5 ftco-animate">
+              <h3 class="mb-3">Make A Booking</h3>
+              
+              
+              <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" method="post"  class="appointment-form">
+                <div class="row form-group d-flex">
+                  <div class="col-md-6">
+                    <div class="input-wrap">
+                      <div class="icon"><span class="ion-md-calendar"></span></div>
+                      <input type="text" id="appointment_date" class="form-control" value="<?php echo $date ?>" name="date" placeholder="Date">
+                      <span class="form-error" style="color: red;"><?php echo $date_error;?></span>
+                    </div>
                   </div>
                 </div>
-                <div class="col-md-6">
-                  <input type="text" class="form-control" name="phone_number" value="<?php echo $phone_number ?>" placeholder="Phone">
-                  <span class="form-error" style="color: red;"><?php echo $phone_number_error;?></span>
+
+                <div>
+                  <label class="mr-sm-2" for="inlineFormCustomSelect" style="color: white;">Choose a service</label>
+                  <select class="custom-select form-group" name ="booked_service" id="inlineFormCustomSelect">
+                    <option value="">Select and option *</option>
+                    <option value="facial" <?php if (isset($booked_service) && $booked_service == "facial") echo "selected" ?> >Facial Treatment</option>
+                    <option value="nails" <?php if (isset($booked_service) && $booked_service == "nails") echo "selected" ?>>Nail Care</option>
+                    <option value="hairstyling" <?php if (isset($booked_service) && $booked_service == "hairstyling") echo "selected" ?>>Hairstyling</option>
+                    <option value="haircutting" <?php if (isset($booked_service) && $booked_service == "haircutting") echo "selected" ?>>Hair Cutting</option>
+                  </select>
+
+                  <span class="form-error" style="color: red;"><?php echo $booked_service_error;?></span>
                 </div>
-              </div>
 
-              <div>
-                <label class="mr-sm-2" for="inlineFormCustomSelect" style="color: white;">Choose a service</label>
-                <select class="custom-select form-group" name ="booked_service" id="inlineFormCustomSelect">
-                  <option value="">Select and option *</option>
-                  <option value="facial" <?php if (isset($booked_service) && $booked_service == "facial") echo "selected" ?> >Facial Treatment</option>
-                  <option value="nails" <?php if (isset($booked_service) && $booked_service == "nails") echo "selected" ?>>Nail Care</option>
-                  <option value="hairstyling" <?php if (isset($booked_service) && $booked_service == "hairstyling") echo "selected" ?>>Hairstyling</option>
-                  <option value="haircutting" <?php if (isset($booked_service) && $booked_service == "haircutting") echo "selected" ?>>Hair Cutting</option>
-                </select>
+                <!-- Add select for user to choose available time -->
+                <div>
+                  <label class="mr-sm-2" for="inlineFormCustomSelect" style="color: white;">Choose a time</label>
+                  <select class="custom-select form-group" name="appointment_time"  id="inlineFormCustomSelect">
+                    <option value="">Choose appointment time *</option>
+                    <option value="1">9 am - 10 am</option>
+                    <option value="2">10 am - 11 am</option>
+                    <option value="3">11 am - 12 am</option>
+                  </select>
 
-                <span class="form-error" style="color: red;"><?php echo $booked_service_error;?></span>
-              </div>
-
-              <!-- Add select for user to choose available time -->
-              <div>
-                <label class="mr-sm-2" for="inlineFormCustomSelect" style="color: white;">Choose a time</label>
-                <select class="custom-select form-group" name="appointment_time"  id="inlineFormCustomSelect">
-                  <option value="">Choose appointment time *</option>
-                  <option value="1">9 am - 10 am</option>
-                  <option value="2">10 am - 11 am</option>
-                  <option value="3">11 am - 12 am</option>
-                </select>
-
-                <span class="form-error" style="color: red;"><?php echo $appointment_time_error;?></span>
-              </div>
+                  <span class="form-error" style="color: red;"><?php echo $appointment_time_error;?></span>
+                </div>
 
 
-              <div class="form-group">
-                <textarea name="booking_request" id="" cols="30" rows="3" class="form-control" placeholder="Is there any extra info you'd like us to note for your appointment?"><?php echo $booking_request ?></textarea>
-                <span class="form-error" style="color: red;"><?php echo $booking_request_error;?></span>
-              </div>
+                <div class="form-group">
+                  <textarea name="booking_request" id="" cols="30" rows="3" class="form-control" placeholder="Is there any extra info you'd like us to note for your appointment?"><?php echo $booking_request ?></textarea>
+                  <span class="form-error" style="color: red;"><?php echo $booking_request_error;?></span>
+                </div>
+                
+                <div class="form-group">
+                  <input type="submit" value="Book Now" class="btn btn-white btn-outline-white py-3 px-4">
+                </div>
+              </form>
+
               
-              <div class="form-group">
-                <input type="submit" value="Book Now" class="btn btn-white btn-outline-white py-3 px-4">
-              </div>
-            </form>
+            </div>
 
-            
-          </div> 
+          <?php endif; ?>
+          
+              
+          
+          
+           
           
           
 

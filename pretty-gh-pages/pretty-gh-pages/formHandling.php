@@ -45,7 +45,7 @@
         /**
          * Password must be at least 8 characters long and include lowercase, uppercase, and numbers 
          */
-        public static function validatePassword(string $passwordInput) {
+        public static function validatePassword(string $passwordInput): bool {
             // Make sure it's 8 or more characters
             if (strlen($passwordInput) < 8){
                 return false;
@@ -58,6 +58,12 @@
 
             return $valid;                 
         }
+
+
+        /*
+            Add method to parse date in the form mm/dd/yyyy to yyyy-mm-dd to YYYY-MM-DD
+        */
+        public static function parseHtmlDateToSQL
 
 
     }

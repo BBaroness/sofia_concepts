@@ -1,6 +1,8 @@
 <?php
   // Start the session
   session_start();
+
+  unset($_SESSION['login_return_url']);					// Remove any previously set return url
 ?>
 
 <!DOCTYPE html>
@@ -32,8 +34,6 @@
     <link rel="stylesheet" href="css/style.css">
   </head>
   <body>
-
-	<?php echo $_SESSION['logged_in_client']; ?>
     
     <div class="hero-wrap js-fullheight" style="background-image: url('images/bg_1.jpg');" data-stellar-background-ratio="0.5">
       <div class="overlay"></div>
@@ -69,10 +69,30 @@
 	          <li class="nav-item"><a href="services.html" class="nav-link">Our Services</a></li>
 	          <li class="nav-item"><a href="booking.php" class="nav-link">Appointment Booking</a></li>
 	          <li class="nav-item"><a href="shop.html" class="nav-link">Shop</a></li>
-	          <li class="nav-item"><a href="testimonials.html" class="nav-link">Testimonials</a></li>
+			  <li class="nav-item"><a href="testimonials.html" class="nav-link">Testimonials</a></li>
+			  
+			  <!-- Add Dynamic parts for user interaction -->
+			  
+				<?php if (!isset($_SESSION['logged_in_client'])): ?>
+					<li class="nav-item"><a href="login.php" class="nav-link"><strong>Log in</strong></a></li>
+				<?php else: ?>
+					<li class="nav-item dropdown">
+						<a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+							<b><?php echo $_SESSION['logged_in_client']['fname']; ?></b>
+						</a>
+						<div class="dropdown-menu" aria-labelledby="navbarDropdown">
+							<a class="dropdown-item" href="client/appointments.php">My Appointments</a>
+							<a class="dropdown-item" href="client/profile.php">Edit Profile</a>
+							<div class="dropdown-divider"></div>
+							<a class="dropdown-item" href="logout.php">Logout</a>
+						</div>
+					</li>
+				<?php endif; ?>
+			  
 	        </ul>
 	      </div>
-	    </div>
+		</div>
+
 	  </nav>
     <!-- END nav -->
     <section class="ftco-section">

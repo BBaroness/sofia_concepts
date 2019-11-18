@@ -1,3 +1,5 @@
+#Create Database
+CREATE DATABASE sofiawebtech;
 
 
 # Create table for clients

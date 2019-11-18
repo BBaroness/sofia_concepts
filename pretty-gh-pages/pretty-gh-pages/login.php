@@ -38,7 +38,7 @@
     <?php            
             
             //Redirrect if someone is already logged in
-            if (array_key_exists('logged_in_user', $_SESSION)) {
+            if (isset($_SESSION['logged_in_client'])) {
               header('Location: index.php');
             }
 
@@ -98,9 +98,14 @@
 
 
             // If this point is reached, the sign in was valid. Navigate to application home page
-            if ($signInValid)
-              header('Location: index.php');
-
+            if ($signInValid){
+              if (isset($_SESSION['login_return_url'])){
+                header('Location: ' . $_SESSION['login_return_url']);     //redirrect to viewed page before user decided to login
+              }else {
+                header('Location: index.php');
+              }
+            }
+              
           ?>
 
     <nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light" id="ftco-navbar">
@@ -156,6 +161,10 @@
                     
                     <div class="form-group my-5">
                         <input type="submit" value="Sign In" class="btn btn-white btn-outline-white py-3 px-4">
+                    </div>
+
+                    <div>
+                      <p>Are you new? <a href="signup.php" style="color: black"><u>Sign up</u></a> today</p>
                     </div>
                 </form>
               
