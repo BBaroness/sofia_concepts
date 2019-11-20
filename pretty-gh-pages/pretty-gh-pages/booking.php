@@ -31,36 +31,117 @@
     <link rel="stylesheet" href="css/flaticon.css">
     <link rel="stylesheet" href="css/icomoon.css">
     <link rel="stylesheet" href="css/style.css">
+
+    <script type="text/javascript">
+      
+      function alertMe(){
+        alert("Event was Triggered");
+      }
+
+
+      function removeAvailableTimeslots() {
+        let element; 
+
+        while (element = document.getElementsByClassName("generated_timeslot")){
+          // Removes an element from the document
+          element.parentNode.removeChild(element);
+        }
+      }
+
+
+      function getAvailableTimeslots() {
+        console.log("I have been called to action");
+
+        if( typeof getAvailableTimeslots.date == 'undefined' ) {
+            getAvailableTimeslots.date = "";
+        }
+        if( typeof getAvailableTimeslots.service_id == 'undefined' ) {
+            getAvailableTimeslots.service_id = "";
+        }
+
+        // If the values have not changed since this method was last called, return
+        if (getAvailableTimeslots.date == document.getElementById('appointment_date_selection')
+        && getAvailableTimeslots.service_id == document.getElementById('appointment_service_selection') ){
+          return;
+        }
+
+        
+        // Get the date and service id
+        getAvailableTimeslots.date = document.getElementById('appointment_date_selection').value;
+        getAvailableTimeslots.service_id = document.getElementById('appointment_service_selection').value;
+
+        if (getAvailableTimeslots.date == "" || getAvailableTimeslots.client_id == "") {
+          // Set error message to show user they need to select day and service to choose time slot
+          document.getElementById("appointment_time_error").innerHTML = "You need to select a date and service first";
+          return;
+        } else {
+            if (window.XMLHttpRequest) {
+                // code for IE7+, Firefox, Chrome, Opera, Safari
+                xmlhttp = new XMLHttpRequest();
+            } else {
+                // code for IE6, IE5
+                xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+            }
+            xmlhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                  console.log(this.responseText);
+                  console.log(document.getElementById("timeslots_insertion_ref"));
+
+                  // document.getElementById("timeslots_insertion_ref").innerHTML = this.responseText;
+                  document.getElementById("timeslots_insertion_ref").insertAdjacentHTML('afterend', this.responseText);
+                }
+            };
+            xmlhttp.open("GET","get_timeslots.php?date=" + getAvailableTimeslots.date + "&service_id=" + getAvailableTimeslots.service_id, true);
+            xmlhttp.send();
+        }
+      }
+
+
+      document.addEventListener('DOMContentLoaded', init, false);   // Add event listeners after the HTML DOM has been loaded into memory
+      
+      function init() {
+        console.log("initialized");
+        document.getElementById('appointment_date_selection').addEventListener('change', getAvailableTimeslots);
+        document.getElementById('appointment_service_selection').addEventListener('change', getAvailableTimeslots);
+      }     
+
+    </script>
+    
   </head>
   <body>
 
     <!-- Start with php script -->
     <?php
 
-            require("databaseHelper.php");
-            require("formHandling.php");
-
-            header("index.php");
+            include_once('classes.php');
 
             $_SESSION['login_return_url'] = 'booking.php';
 
             $bookingSent = false;
+            $formValid = false;
+
+            $db = new databaseHelper();     // for db stuff
 
             // Add variables for each form input
             $date = $booking_request = $booked_service = $appointment_time = "";
 
-            $date_error = $booking_request_error = $appointment_time_error = $booked_service_error = "";
+            $date_error = $booking_request_error = $booked_service_error = "";
 
+            // Get all available services from database
+            $availableServices = $db->getServices();
             
             // Check for form submission and handle form
             
             if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
+              // Toggle signup validity and begin validation
+              $formValid = true;
+
               if (empty($_POST['date'])){
-                $date_error = "* Date field cannot be empty";                
+                $date_error = "* Date field cannot be empty"; 
+                $formValid = false;               
               }else {
-                $date = FormHandler:: sanitizeHtmlInput($_POST['date']);
-                
+                $date = FormHandler:: sanitizeHtmlInput($_POST['date']);                
               }
 
               if (empty($_POST['booking_request'])){
@@ -71,17 +152,27 @@
 
               if(empty($_POST['booked_service'])) {
                 $booked_service_error = "* You need to let us know which of our services you are booking";
+                $formValid = false; 
               }else {
                 $booked_service = FormHandler::sanitizeHtmlInput($_POST['booked_service']);
               }
 
               if(empty($_POST['appointment_time'])) {
                 $appointment_time_error = "* To book and appointment, choose a time slot";
+                $formValid = false; 
               }else {
-                $appointment_time = FormHandler::sanitizeHtmlInput($_POST['booked_service']);                
+                $appointment_time = FormHandler::sanitizeHtmlInput($_POST['appointment_time']);                
+              }
+
+
+              if ($formValid){
+                // Create a booking with form details
+                $bookingSent = $db->createNewBooking($appointment_time, $_SESSION['logged_in_client']['id'], $booked_service, $date);                
               }
                                           
             }
+
+            echo $booked_service;
 
           ?>
 
@@ -119,11 +210,11 @@
 	          <li class="nav-item"><a href="services.html" class="nav-link">Our Services</a></li>
 	          <li class="nav-item active"><a href="booking.php" class="nav-link">Appointment Booking</a></li>
 	          <li class="nav-item"><a href="shop.html" class="nav-link">Shop</a></li>
-			  <li class="nav-item"><a href="testimonials.html" class="nav-link">Testimonials</a></li>
+			  <li class="nav-item"><a href="testimonials.php" class="nav-link">Testimonials</a></li>
 			  
-			  <!-- Add Dynamic parts for user interaction -->
-			  
-				<?php if (!isset($_SESSION['logged_in_client'])): ?>
+        <!-- Add Dynamic parts for user interaction -->			  
+                
+        <?php if (!isset($_SESSION['logged_in_client'])): ?>
 					<li class="nav-item"><a href="login.php" class="nav-link"><strong>Log in</strong></a></li>
 				<?php else: ?>
 					<li class="nav-item dropdown">
@@ -170,7 +261,16 @@
           </div>
 
 
-          <?php if (!isset($_SESSION['logged_in_client'])): ?>            <!-- If user isn't logged in  tell them to-->
+          <?php if ($formValid): ?>            <!-- Display Success Message if user successfully makes a booking-->
+            <div class="col-md-6 appointment pl-md-5 ftco-animate">
+
+              <h3 class="" style="color: black">Your booking was done succesfully. See you on <?php echo $date ?>.</h3>
+
+              <a href="index.php" class="btn btn-white btn-outline-white my-3 py-2 px-4">Visit Home</a>
+                            
+          </div>
+
+          <?php elseif (!isset($_SESSION['logged_in_client'])): ?>            <!-- If user isn't logged in  tell them to-->
             <div class="col-md-6 appointment pl-md-5 ftco-animate">
 
               <h3 class="" style="color: black">Sorry... You need to login first</h3>
@@ -194,7 +294,7 @@
                   <div class="col-md-6">
                     <div class="input-wrap">
                       <div class="icon"><span class="ion-md-calendar"></span></div>
-                      <input type="text" id="appointment_date" class="form-control" value="<?php echo $date ?>" name="date" placeholder="Date">
+                      <input type="text" id="appointment_date_selection" class="form-control" value="<?php echo $date ?>" name="date" placeholder="Date">
                       <span class="form-error" style="color: red;"><?php echo $date_error;?></span>
                     </div>
                   </div>
@@ -202,12 +302,11 @@
 
                 <div>
                   <label class="mr-sm-2" for="inlineFormCustomSelect" style="color: white;">Choose a service</label>
-                  <select class="custom-select form-group" name ="booked_service" id="inlineFormCustomSelect">
-                    <option value="">Select and option *</option>
-                    <option value="facial" <?php if (isset($booked_service) && $booked_service == "facial") echo "selected" ?> >Facial Treatment</option>
-                    <option value="nails" <?php if (isset($booked_service) && $booked_service == "nails") echo "selected" ?>>Nail Care</option>
-                    <option value="hairstyling" <?php if (isset($booked_service) && $booked_service == "hairstyling") echo "selected" ?>>Hairstyling</option>
-                    <option value="haircutting" <?php if (isset($booked_service) && $booked_service == "haircutting") echo "selected" ?>>Hair Cutting</option>
+                  <select class="custom-select form-group" name="booked_service"  id="appointment_service_selection" id="inlineFormCustomSelect">      <!-- Dynamic dropdown for services -->
+                    <option value="" selected>Select and option *</option>
+                    <?php foreach ($availableServices as $service): ?>
+                      <option value="<?php echo $service['id'] ?>" <?php if (isset($booked_service) && $booked_service == $service['id']) echo 'selected' ?> > <?php echo $service['name'] ?> </option>
+                    <?php endforeach; ?>
                   </select>
 
                   <span class="form-error" style="color: red;"><?php echo $booked_service_error;?></span>
@@ -216,14 +315,13 @@
                 <!-- Add select for user to choose available time -->
                 <div>
                   <label class="mr-sm-2" for="inlineFormCustomSelect" style="color: white;">Choose a time</label>
-                  <select class="custom-select form-group" name="appointment_time"  id="inlineFormCustomSelect">
-                    <option value="">Choose appointment time *</option>
-                    <option value="1">9 am - 10 am</option>
-                    <option value="2">10 am - 11 am</option>
-                    <option value="3">11 am - 12 am</option>
+                  <select class="custom-select form-group" name="appointment_time" id="inlineFormCustomSelect">
+                    <option value="" id="timeslots_insertion_ref">Choose appointment time *</option>
+                    <div ></div> <!-- Dynamically generated options go here -->                   
+
                   </select>
 
-                  <span class="form-error" style="color: red;"><?php echo $appointment_time_error;?></span>
+                  <span id="appointment_time_error" class="form-error" style="color: red;"></span>
                 </div>
 
 
@@ -235,9 +333,7 @@
                 <div class="form-group">
                   <input type="submit" value="Book Now" class="btn btn-white btn-outline-white py-3 px-4">
                 </div>
-              </form>
-
-              
+              </form>                         
             </div>
 
           <?php endif; ?>
@@ -353,6 +449,7 @@
   <script src="js/scrollax.min.js"></script>
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBVWaKrjvy3MaE7SQ74_uJiULgl1JY0H2s&sensor=false"></script>
   <script src="js/google-map.js"></script>
-  <script src="js/main.js"></script>    
+  <script src="js/main.js"></script>
+    
   </body>
 </html>

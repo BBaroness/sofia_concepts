@@ -36,16 +36,13 @@
 
     <!-- Start with php script -->
     <?php            
-            
             //Redirrect if someone is already logged in
             if (isset($_SESSION['logged_in_client'])) {
               header('Location: index.php');
             }
 
-            require("databaseHelper.php");
-            require("formHandling.php");
-
-            header("index.php");
+            include_once("databaseHelper.php");
+            include_once("formHandling.php");
 
             $db = new databaseHelper();
 

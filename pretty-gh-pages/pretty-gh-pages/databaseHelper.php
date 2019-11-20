@@ -1,9 +1,7 @@
 <?php
 
-define("DATABASE_HOST", 'localhost');
-define("DATABASE_USER", 'root');
-define("DATABASE_PASSWORD", '');
-define("DATABASE_NAME", 'sofiawebtech');
+
+include_once('classes.php');
 
 
 
@@ -24,7 +22,7 @@ class databaseHelper {
     
 
     public function _destruct() {
-        $this->connection.close();
+		mysqli_close($this->connection);
 	}
 	
 
@@ -68,14 +66,49 @@ class databaseHelper {
 
 
 
-    public function getBookedTimeSlots($date, $booked_service) {
-        return $this->query('SELECT * FROM someTable WHERE something = ? AND password = ?', array($date, $booked_service))->fetchAll();
-    }
+    public function getAvailableTimeSlots(string $date, string $booked_service_id) {
+		// First convert date from html format to what the MySQL database will expect
+		$date = FormHandler::parseHtmlDateToSQL($date);
+
+		return $this->query('SELECT id, label FROM time_slots
+							WHERE id NOT IN (
+									SELECT time_slot_id FROM bookings
+									WHERE booking_date = ? AND service_id = ?)', array($date, $booked_service_id))->fetchAll();
+	}
+	
+
+	public function getServices() {
+		return $this->query('SELECT id, name, price FROM services')->fetchAll();
+	}
 
 
-    public function createNewBooking(): boolean {
-        //THis function should create a new booking insided the database and return true if the insertion is successful. False otherwise.
-    }
+    /**
+	 * This function should create a new booking and return true if the insertion is successful. False otherwise.
+	 */
+	public function createNewBooking(string $time_slot_id, string $client_id, string $service_id, string $booking_date): bool {
+        $booking_date = FormHandler::parseHtmlDateToSQL($booking_date);
+		$response = $this->query('INSERT INTO `bookings` (`time_slot_id`, `client_id`, `service_id`, `booking_date`) 
+		VALUES (?, ?, ?, ?)', array($time_slot_id, $client_id, $service_id, $booking_date))->affectedRows();
+
+		if ($response == 1) {
+			return true;
+		}
+		return false;
+	}
+	
+
+	/*
+		Add a method for creating a new comment/testimonial
+	*/
+	public function createTestimonial(string $client_id, string $subject, string $message): bool{
+		$response = $this->query('INSERT INTO `testimonials` (`client_id`, `subject`, `message`) 
+		VALUES (?, ?, ?)', array($client_id, $subject, $message))->affectedRows();
+
+		if ($response == 1) {
+			return true;
+		}
+		return false;
+	}
     
 
 	
@@ -168,4 +201,5 @@ class databaseHelper {
     }
 
 }
+
 ?>

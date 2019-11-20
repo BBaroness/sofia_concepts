@@ -15,7 +15,7 @@
 <body>
   <?php
 
-    require("databaseHelper.php");
+    include_once("databaseHelper.php");
 
     $db = new databaseHelper();
 

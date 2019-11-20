@@ -52,18 +52,26 @@
             }
 
             // Make sure the stirng contains lowercase, uppercase, and a number
-            $valid = preg_match("/[a-z]/",$passwordInput);
-            $valid = preg_match("/[A-Z]/",$passwordInput);
-            $valid = preg_match("/[0-9]/",$passwordInput);
+            $test1 = preg_match("/[a-z]/",$passwordInput);
+            $test2 = preg_match("/[A-Z]/",$passwordInput);
+            $test3 = preg_match("/[0-9]/",$passwordInput);
 
-            return $valid;                 
+            if ($test1 && $test2 && $test3){
+                return true;
+            }else{
+                return false;
+            }
         }
 
 
         /*
             Add method to parse date in the form mm/dd/yyyy to yyyy-mm-dd to YYYY-MM-DD
         */
-        public static function parseHtmlDateToSQL
+        public static function parseHtmlDateToSQL(string $htmlDate): string {
+            $str_array = explode('/', $htmlDate, 3);
+
+            return $str_array[2] . '-' . $str_array[0] . '-' . $str_array[1];
+        }
 
 
     }

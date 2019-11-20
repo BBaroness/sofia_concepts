@@ -1,3 +1,11 @@
+<?php
+  // Start the session
+  session_start();
+
+  $_SESSION['login_return_url'] = 'testimonials.php';
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -27,43 +35,106 @@
     <link rel="stylesheet" href="css/style.css">
   </head>
   <body>
-    
-    <div class="hero-wrap js-fullheight" style="background-image: url('images/bg_1.jpg');" data-stellar-background-ratio="0.5">
-      <div class="overlay"></div>
-      <div class="container">
-        <div class="row no-gutters slider-text js-fullheight align-items-center justify-content-center" data-scrollax-parent="true">
-          <div class="col-md-8 ftco-animate text-center" data-scrollax=" properties: { translateY: '70%' }">
-          	<div class="icon">
-          		<a href="index.php" class="logo">
-          			<span class="flaticon-flower"></span>
-          			<h1>Allure</h1>
-          		</a>
-          	</div>
-            <h1 class="mb-3 mt-5 bread" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }">Testimonials</h1>
-            <p class="breadcrumbs" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }"><span class="mr-2"><a href="index.php">Home</a></span> <span>Testimonials</span></p>
-          </div>
-        </div>
-      </div>
-    </div>
+
+    <?php
+
+      // Do some form validation
+      include_once("databaseHelper.php");
+      include_once("formHandling.php");
+
+      header("index.php");
+
+      $db = new databaseHelper();
+
+      $commentValid = false;
+
+
+      // Add variables for each form input
+      $subject = $message = "";
+
+      $subject_error = $message_error = "";
+
+      
+      // Check for form submission and handle form
+      
+      if ($_SERVER["REQUEST_METHOD"] == "POST") {
+
+        // Toggle sign in validity before starting checks
+        $commentValid = true;
+
+        // Validate Subject
+        if (empty($_POST['subject'])){
+          $subject_error = "* Entering a subject helps us group comments/testimonials. Give a short summary of your sentiment.";
+          $commentValid = false;
+        }else {
+          $subject = FormHandler:: sanitizeHtmlInput($_POST['subject']);
+        }
+        
+        // Validate Comment
+
+        if (empty($_POST['message'])) {
+          $message_error = "Please enter your comment";
+          $commentValid = false;
+        }else {
+          $message = $_POST['message'];
+        }        
+        
+      }
+
+
+      // If this point is reached, the comment/testimonial was valid. Insert data into the database
+      if ($commentValid){
+        $db = new databaseHelper();
+        $db->createTestimonial($_SESSION['logged_in_client']['id'], $subject, $message);
+        $db->_destruct();
+
+        if (isset($_SESSION['login_return_url'])){
+          header('Location: ' . $_SESSION['login_return_url']);     //redirrect to viewed page before user decided to login
+        }else {
+          header('Location: index.php');
+        }
+      }
+
+    ?>
 
     <nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light" id="ftco-navbar">
 	    <div class="container">
-	      <a class="navbar-brand" href="index.php">Allure</a>
+	      <a class="navbar-brand" href="index.php">ALLURE</a>
 	      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#ftco-nav" aria-controls="ftco-nav" aria-expanded="false" aria-label="Toggle navigation">
 	        <span class="oi oi-menu"></span> Menu
 	      </button>
 
 	      <div class="collapse navbar-collapse" id="ftco-nav">
 	        <ul class="navbar-nav ml-auto">
-	          <li class="nav-item"><a href="index.php" class="nav-link">Home</a></li>
+	          <li class="nav-item active"><a href="index.php" class="nav-link">Home</a></li>
 	          <li class="nav-item"><a href="about.html" class="nav-link">About Us</a></li>
 	          <li class="nav-item"><a href="services.html" class="nav-link">Our Services</a></li>
 	          <li class="nav-item"><a href="booking.php" class="nav-link">Appointment Booking</a></li>
 	          <li class="nav-item"><a href="shop.html" class="nav-link">Shop</a></li>
-	          <li class="nav-item active"><a href="testimonials.html" class="nav-link">Testimonials</a></li>
+			  <li class="nav-item"><a href="testimonials.php" class="nav-link">Testimonials</a></li>
+			  
+			  <!-- Add Dynamic parts for user interaction -->
+			  
+				<?php if (!isset($_SESSION['logged_in_client'])): ?>
+					<li class="nav-item"><a href="login.php" class="nav-link"><strong>Log in</strong></a></li>
+				<?php else: ?>
+					<li class="nav-item dropdown">
+						<a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+							<b><?php echo $_SESSION['logged_in_client']['fname']; ?></b>
+						</a>
+						<div class="dropdown-menu" aria-labelledby="navbarDropdown">
+							<a class="dropdown-item" href="client/appointments.php">My Appointments</a>
+							<a class="dropdown-item" href="client/profile.php">Edit Profile</a>
+							<div class="dropdown-divider"></div>
+							<a class="dropdown-item" href="logout.php">Logout</a>
+						</div>
+					</li>
+				<?php endif; ?>
+			  
 	        </ul>
 	      </div>
-	    </div>
+		</div>
+
 	  </nav>
     <!-- END nav -->
     <section class="ftco-section">
@@ -204,7 +275,7 @@
       </div>
     </section>
 
-    <section class="ftco-section contact-section">
+    <section class="ftco-section contact-section" id="testimonial_section">
       <h3>
         <center>Comments/Testimonials</center></h3>
         <div class="container mt-5">
@@ -224,35 +295,63 @@
 		            </div>
 							</div>
 						</div>
-						<div class="col-md-1"></div>
-            <div class="col-md-6 ftco-animate">
-              <form action="#" class="contact-form">
-              	<div class="row">
-              		<div class="col-md-6">
-		                <div class="form-group">
-		                  <input type="text" class="form-control" placeholder="Your Name">
-		                </div>
-	                </div>
-	                <div class="col-md-6">
-		                <div class="form-group">
-		                  <input type="text" class="form-control" placeholder="Your Email">
-		                </div>
-		                </div>
+            <div class="col-md-1"></div>  
+            
+
+            <?php if ($commentValid): ?>     <!-- Display Thank you message if the form has been submitted successfully -->
+
+              <div class="flex justify-content-center">
+                <div class="col-12">
+                  <h3 class="" style="color: black;">Thanks for submitting feedback. We truly appreciate this.</h3>
                 </div>
-                <div class="form-group">
-                  <input type="text" class="form-control" placeholder="Subject">
+                <div class="col-md-6 ftco-animate">
+                  <a href="index.php" class="btn btn-primary my-3 py-2 px-4">Visit Home</a><br>
+                </div>                           
+              </div> 
+            
+            <?php elseif (!isset($_SESSION['logged_in_client'])): ?>            <!-- If user isn't logged in  tell them to -->
+              <div class="flex justify-content-center">
+                <div class="col-12">
+                  <h3 class="" style="color: black;">Sorry... You need to login first</h3>
                 </div>
-                <div class="form-group">
-                  <textarea name="" id="" cols="30" rows="7" class="form-control" placeholder="Message"></textarea>
+                <div class="col-md-6 ftco-animate">
+                  <a href="login.php" class="btn btn-primary my-3 py-2 px-4">Sign In</a><br>
                 </div>
-                <div class="form-group">
-                  <input type="submit" value="Send Message" class="btn btn-primary py-3 px-5">
-                </div>
-              </form>
-            </div>
+                  
+                <div class="col-12">
+                  <p style="color: black">Are you new here? <a href="signup.php" style="color: pink"><u>Sign up</u></a> instead</p>
+                </div>                              
+              </div>             
+
+            <?php else: ?>            <!-- If they are logged in, then they can book an appointment -->
+              <div class="col-md-6 ftco-animate">
+                <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]) . "#testimonial_section";?>" method="post" class="contact-form">
+                  <div class="form-group">
+                    <input type="text" class="form-control" value="<?php echo $subject ?>" name="subject" placeholder="Subject">
+                    <span class="form-error" style="color: red;"><?php echo $subject_error;?></span>
+                  </div>
+                  <div class="form-group">
+                    <textarea name="message" cols="30" rows="7" class="form-control" placeholder="Message"><?php echo $message?></textarea>
+                    <span class="form-error" style="color: red;"><?php echo $message_error;?></span>
+                  </div>
+                  <div class="form-group">
+                    <input type="submit" value="Send Testimonial" class="btn btn-primary py-3 px-5">
+                  </div>
+                </form>
+              </div>
+            <?php endif; ?>
           </div>
         </div>
       </section>
+
+      <?php if ($commentValid) { 
+        for ($i = 0; $i < 10; $i++) {
+          echo "it worked\n";
+        }
+      }
+      ?>
+
+
 
       <!-- <div id="map"></div> -->
 

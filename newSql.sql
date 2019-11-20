@@ -19,6 +19,7 @@ CREATE TABLE `sofiawebtech`.`clients` (
   `client_id` INT NOT NULL,
   `subject` VARCHAR(45) NOT NULL,
   `message` VARCHAR(280) NOT NULL,
+  `display_approval` BOOLEAN NOT NULL DEFAULT 0,
   INDEX `client_comment_reference_idx` (`client_id` ASC),
   CONSTRAINT `client_comment_reference`
     FOREIGN KEY (`client_id`)
@@ -29,7 +30,7 @@ CREATE TABLE `sofiawebtech`.`clients` (
     
     # Create table for services on offer
     CREATE TABLE `sofiawebtech`.`services` (
-  `id` INT NOT NULL,
+  `id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(45) NOT NULL,
   `price` DECIMAL(5,2) NOT NULL,
   PRIMARY KEY (`id`));

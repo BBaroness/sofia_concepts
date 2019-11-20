@@ -31,8 +31,8 @@
     <!-- Start with php script -->
     <?php
 
-            require("databaseHelper.php");
-            require("formHandling.php");
+            require_once("databaseHelper.php");
+            require_once("formHandling.php");
 
             header("index.php");
 
@@ -146,7 +146,7 @@
             <li class="nav-item"><a href="services.html" class="nav-link">Our Services</a></li>
             <li class="nav-item active"><a href="booking.php" class="nav-link">Appointment Booking</a></li>
             <li class="nav-item"><a href="shop.html" class="nav-link">Shop</a></li>
-            <li class="nav-item"><a href="testimonials.html" class="nav-link">Testimonials</a></li>
+            <li class="nav-item"><a href="testimonials.php" class="nav-link">Testimonials</a></li>
 	        </ul>
 	      </div>
 	    </div>
