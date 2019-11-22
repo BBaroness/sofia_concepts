@@ -81,7 +81,7 @@
 							<b><?php echo $_SESSION['logged_in_client']['fname']; ?></b>
 						</a>
 						<div class="dropdown-menu" aria-labelledby="navbarDropdown">
-							<a class="dropdown-item" href="client/appointments.php">My Appointments</a>
+							<a class="dropdown-item" href="#">My Appointments</a>
 							<a class="dropdown-item" href="client/profile.php">Edit Profile</a>
 							<div class="dropdown-divider"></div>
 							<a class="dropdown-item" href="logout.php">Logout</a>
@@ -405,11 +405,11 @@
     <footer class="ftco-footer ftco-section img">
     	<div class="overlay"></div>
       <div class="container">
-        <div class="row mb-5">
+        <div class="row mb-5 justify-content-center">
           <div class="col-md-3">
             <div class="ftco-footer-widget mb-4">
-              <h2 class="ftco-heading-2">Contact Us</h2>
-              <p>.</p>
+              <h2 class="ftco-heading-2">Connect with us</h2>
+
               <ul class="ftco-footer-social list-unstyled float-md-left float-lft mt-5">
                 <li class="ftco-animate"><a href="#"><span class="icon-twitter"></span></a></li>
                 <li class="ftco-animate"><a href="#"><span class="icon-facebook"></span></a></li>
@@ -417,33 +417,7 @@
               </ul>
             </div>
           </div>
-          <div class="col-md-4">
-            <div class="ftco-footer-widget mb-4">
-              <h2 class="ftco-heading-2">Recent Blog</h2>
-              <div class="block-21 mb-4 d-flex">
-                <a class="blog-img mr-4" style="background-image: url(images/image_1.jpg);"></a>
-                <div class="text">
-                  <h3 class="heading"><a href="#">Even the all-powerful Pointing has no control about</a></h3>
-                  <div class="meta">
-                    <div><a href="#"><span class="icon-calendar"></span> July 12, 2018</a></div>
-                    <div><a href="#"><span class="icon-person"></span> Admin</a></div>
-                    <div><a href="#"><span class="icon-chat"></span> 19</a></div>
-                  </div>
-                </div>
-              </div>
-              <div class="block-21 mb-4 d-flex">
-                <a class="blog-img mr-4" style="background-image: url(images/image_2.jpg);"></a>
-                <div class="text">
-                  <h3 class="heading"><a href="#">Even the all-powerful Pointing has no control about</a></h3>
-                  <div class="meta">
-                    <div><a href="#"><span class="icon-calendar"></span> July 12, 2018</a></div>
-                    <div><a href="#"><span class="icon-person"></span> Admin</a></div>
-                    <div><a href="#"><span class="icon-chat"></span> 19</a></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+          
           <div class="col-md-3">
             <div class="ftco-footer-widget mb-4">
             	<h2 class="ftco-heading-2">Location</h2>

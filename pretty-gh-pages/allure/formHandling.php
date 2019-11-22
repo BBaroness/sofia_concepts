@@ -65,7 +65,7 @@
 
 
         /*
-            Add method to parse date in the form mm/dd/yyyy to yyyy-mm-dd to YYYY-MM-DD
+            Add method to parse date in the form mm/dd/yyyy to yyyy-mm-dd
         */
         public static function parseHtmlDateToSQL(string $htmlDate): string {
             $str_array = explode('/', $htmlDate, 3);

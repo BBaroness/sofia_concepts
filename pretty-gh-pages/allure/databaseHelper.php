@@ -109,6 +109,22 @@ class databaseHelper {
 		}
 		return false;
 	}
+
+	/*
+
+	*/
+	public function getDisplayTestimonials(){
+		return $this->query('SELECT * FROM testimonials')->fetchAll();
+	}
+
+
+	/* Add function for getting a client's pending appointments */
+	public function getPendingAppointments(string $client_id){
+
+		return $this->query('SELECT * FROM bookings
+							WHERE client_id = ? AND ( SELECT getdate()) <= booking_date
+							ORDER BY booking_date ASC', array($client_id))->fetchAll();
+	}
     
 
 	

@@ -106,12 +106,12 @@
 
 	      <div class="collapse navbar-collapse" id="ftco-nav">
 	        <ul class="navbar-nav ml-auto">
-	          <li class="nav-item active"><a href="index.php" class="nav-link">Home</a></li>
+	          <li class="nav-item"><a href="index.php" class="nav-link">Home</a></li>
 	          <li class="nav-item"><a href="about.html" class="nav-link">About Us</a></li>
 	          <li class="nav-item"><a href="services.html" class="nav-link">Our Services</a></li>
 	          <li class="nav-item"><a href="booking.php" class="nav-link">Appointment Booking</a></li>
 	          <li class="nav-item"><a href="shop.html" class="nav-link">Shop</a></li>
-			  <li class="nav-item"><a href="testimonials.php" class="nav-link">Testimonials</a></li>
+			  <li class="nav-item active"><a href="testimonials.php" class="nav-link">Testimonials</a></li>
 			  
 			  <!-- Add Dynamic parts for user interaction -->
 			  
@@ -123,7 +123,7 @@
 							<b><?php echo $_SESSION['logged_in_client']['fname']; ?></b>
 						</a>
 						<div class="dropdown-menu" aria-labelledby="navbarDropdown">
-							<a class="dropdown-item" href="client/appointments.php">My Appointments</a>
+							<a class="dropdown-item" href="#">My Appointments</a>
 							<a class="dropdown-item" href="client/profile.php">Edit Profile</a>
 							<div class="dropdown-divider"></div>
 							<a class="dropdown-item" href="logout.php">Logout</a>
@@ -275,9 +275,58 @@
       </div>
     </section>
 
+
+    <!-- Display Customer Testimonials -->
+    <section class="ftco-section">
+    	<div class="container">
+    		<div class="row">
+          <div class="col-12 text-center" style="padding-bottom: 70px">
+            <h2>Customer Testimonials</h2>
+          </div>
+          <div class="col-md-4 ftco-animate">
+            <div class="media d-block text-center block-6 services">
+              <div class="icon d-flex mb-3 justify-content-center">
+                <h4>Michael Asamoah</h4>
+              </div>
+              <div class="media-body">
+                <h3 class="heading">This is AMAZING!!</h3>
+                <i>"First time I walked through the doors at Allure was 4 years ago. I haven't looked back since. Allure has the absolute best service."</i>
+              </div>
+            </div>      
+          </div>
+
+          <div class="col-md-4 ftco-animate">
+            <div class="media d-block text-center block-6 services">
+              <div class="icon d-flex mb-3 justify-content-center">
+                <h4>Baronness Diowusuo</h4>
+              </div>
+              <div class="media-body">
+                <h3 class="heading">Don't think twice</h3>
+                <i>"Stop. Don't think. Just walk in. You'll thank me later. Choosing Allure is one of the best style choices I have made to date. I know you won't regret it"</i>
+              </div>
+            </div>      
+          </div>
+
+          <div class="col-md-4 ftco-animate">
+            <div class="media d-block text-center block-6 services">
+              <div class="icon d-flex mb-3 justify-content-center">
+                <h4>kizzita Mnsah-Fawzy</h4>
+              </div>
+              <div class="media-body">
+                <h3 class="heading">Hair on fleek... everyday</h3>
+                <i>"Since choosing Allure, my natural hair has been the talk of my office, home, church.... literally everywhere. There isn't a better place in Accra to take care or your hair. I chose Allure. I think you should too"</i>
+              </div>
+            </div>      
+          </div>
+          
+        </div>
+    	</div>
+    </section>
+
+
     <section class="ftco-section contact-section" id="testimonial_section">
       <h3>
-        <center>Comments/Testimonials</center></h3>
+        <center>Submit Yours</center></h3>
         <div class="container mt-5">
           <div class="row block-9">
 						<div class="col-md-4 contact-info ftco-animate">
@@ -355,14 +404,14 @@
 
       <!-- <div id="map"></div> -->
 
-    <footer class="ftco-footer ftco-section img">
+      <footer class="ftco-footer ftco-section img">
     	<div class="overlay"></div>
       <div class="container">
-        <div class="row mb-5">
+        <div class="row mb-5 justify-content-center">
           <div class="col-md-3">
             <div class="ftco-footer-widget mb-4">
-              <h2 class="ftco-heading-2">About Us</h2>
-              <p>Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.</p>
+              <h2 class="ftco-heading-2">Connect with us</h2>
+
               <ul class="ftco-footer-social list-unstyled float-md-left float-lft mt-5">
                 <li class="ftco-animate"><a href="#"><span class="icon-twitter"></span></a></li>
                 <li class="ftco-animate"><a href="#"><span class="icon-facebook"></span></a></li>
@@ -370,52 +419,13 @@
               </ul>
             </div>
           </div>
-          <div class="col-md-4">
-            <div class="ftco-footer-widget mb-4">
-              <h2 class="ftco-heading-2">Recent Blog</h2>
-              <div class="block-21 mb-4 d-flex">
-                <a class="blog-img mr-4" style="background-image: url(images/image_1.jpg);"></a>
-                <div class="text">
-                  <h3 class="heading"><a href="#">Even the all-powerful Pointing has no control about</a></h3>
-                  <div class="meta">
-                    <div><a href="#"><span class="icon-calendar"></span> July 12, 2018</a></div>
-                    <div><a href="#"><span class="icon-person"></span> Admin</a></div>
-                    <div><a href="#"><span class="icon-chat"></span> 19</a></div>
-                  </div>
-                </div>
-              </div>
-              <div class="block-21 mb-4 d-flex">
-                <a class="blog-img mr-4" style="background-image: url(images/image_2.jpg);"></a>
-                <div class="text">
-                  <h3 class="heading"><a href="#">Even the all-powerful Pointing has no control about</a></h3>
-                  <div class="meta">
-                    <div><a href="#"><span class="icon-calendar"></span> July 12, 2018</a></div>
-                    <div><a href="#"><span class="icon-person"></span> Admin</a></div>
-                    <div><a href="#"><span class="icon-chat"></span> 19</a></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-2">
-             <div class="ftco-footer-widget mb-4 ml-md-4">
-              <h2 class="ftco-heading-2">Spa Center</h2>
-              <ul class="list-unstyled">
-                <li><a href="#" class="py-2 d-block">Body Care</a></li>
-                <li><a href="#" class="py-2 d-block">Massage</a></li>
-                <li><a href="#" class="py-2 d-block">Hydrotherapy</a></li>
-                <li><a href="#" class="py-2 d-block">Yoga</a></li>
-                <li><a href="#" class="py-2 d-block">Sauna</a></li>
-                <li><a href="#" class="py-2 d-block">Aquazone</a></li>
-              </ul>
-            </div>
-          </div>
+          
           <div class="col-md-3">
             <div class="ftco-footer-widget mb-4">
-            	<h2 class="ftco-heading-2">Have a Questions?</h2>
+            	<h2 class="ftco-heading-2">Location</h2>
             	<div class="block-23 mb-3">
 	              <ul>
-	                <li><span class="icon icon-map-marker"></span><span class="text">203 Fake St. Mountain View, San Francisco, California, USA</span></li>
+	                <li><span class="icon icon-map-marker"></span><span class="text">A55 Obenyaade St.  Tema Comm.11, Accra, GHANA</span></li>
 	                <li><a href="#"><span class="icon icon-phone"></span><span class="text">+2 392 3929 210</span></a></li>
 	                <li><a href="#"><span class="icon icon-envelope"></span><span class="text">info@yourdomain.com</span></a></li>
 	              </ul>
@@ -427,7 +437,7 @@
           <div class="col-md-12 text-center">
 
             <p><!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-  Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made with <i class="icon-heart" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a>
+  Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | This website was made with <i class="icon-heart" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Sofia Concepts</a>
   <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. --></p>
           </div>
         </div>
